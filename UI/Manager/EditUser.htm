@@ -1,0 +1,126 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" >
+<head>
+    <title></title>
+    <link href="../CSS/style2.css" rel="stylesheet" type="text/css" />
+    <script src="../js/jquery-1.10.2.js"></script>
+    <script src="../js/MyAjax.js"></script>
+    <script src="../js/json.js"></script>
+    <script>
+        $(function () {
+            
+            $.myajax("../W.asmx/seleRolest", null, function (d) {
+                $.each(d, function (k, v) {
+                    $("<option>").text(v.RoleName).val(v.ID).appendTo($("select"));
+                })
+            });
+
+            var Users = window.dialogArguments;
+                    //$("input:eq(0)").val(Users.UserLName);
+                    //$("input:eq(1)").val();
+                    //$("input:eq(2)").val();
+                    //$("input:eq(3)").val(Users.UserName);
+                    //$("select option:selected").val(Users.RoleID);
+            //alert(Users.RoleName);
+
+            if (Users == undefined) {
+                $(":button:eq(1)").click(function () {
+                    window.href = "UserManager.htm";
+                });
+
+                $(":button:eq(0)").click(function () {
+
+                    var name = $("input:eq(0)").val();
+                    var pwd =  $("input:eq(1)").val();
+                    var pwds = $("input:eq(2)").val();
+                    var zname= $("input:eq(3)").val();
+                    var js = $("select option:selected").val();
+                    var jss = $("select option:selected").text();
+                    var users = { "UserLName": name, "UserLPWD": pwd, "UserName": zname, "RoleID": js };
+
+                    $.myajax("../W.asmx/inRole", { "u": users }, function (d) {
+                        if (d > 0) {
+                            //alert("u".users);
+                            window.returnValue = { "UserLName": name, "UserLPWD": pwd, "UserName": zname, "RoleID": jss, "UserID": d };
+                            window.close();
+                        } else {
+                            alert("NO");
+                        }
+                    });
+                });
+            } else {
+                $(":button:eq(0)").click(function () {
+                    var name = $("input:eq(0)").val();
+                    var pwd =  $("input:eq(1)").val();
+                    var pwds = $("input:eq(2)").val();
+                    var zname= $("input:eq(3)").val();
+                    var js = $("select option:selected").val();
+                    var jss = $("select option:selected").text();
+                    //alert(jss);
+                    var users = { "UserID":Users.UserID,"UserLName": name, "UserLPWD": pwd, "UserName": zname, "RoleID": js };
+
+                    $.myajax("../W.asmx/upUsers", { "u": users }, function (d) {
+                        if (d) {
+                            //alert("u".users);
+                            
+                            window.returnValue = { "UserLName": name, "UserLPWD": pwd, "UserName": zname, "RoleName": jss, "UserID": Users.UserID };
+                            window.close();
+                        } else {
+                            alert("NO");
+                        }
+                    });
+                });
+            };
+        })
+    </script>
+
+</head>
+<body>
+    <table class="tableEdit">
+        <thead>
+            <tr>
+                <td colspan="4">添加用户</td>
+            </tr>
+        </thead>
+        <tr>
+            <th>登陆名：</th>
+            <td colspan="3"><input type="text" style="width:300px" /></td>
+        </tr>
+        <tr>
+            <th>密码：</th>
+            <td colspan="3"><input type="text" style="width:300px" /></td>
+        </tr>
+        <tr>
+            <th>确认密码：</th>
+            <td colspan="3"><input type="text" style="width:300px" /></td>
+        </tr>
+        <tr>
+            <th>真实姓名：</th>
+            <td colspan="3"><input type="text" style="width:300px" /></td>
+        </tr>
+        <tr>
+            <th>所属角色：</th>
+            <td colspan="3">
+                <select>
+                    <!--<option>系统管理员</option>
+                    <option>总经理</option>
+                    <option>市场部经理</option>
+                    <option>业务代理</option>
+                    <option>售后部经理</option>
+                    <option>售后支持</option>
+                    <option>客服部经理</option>
+                    <option>客服人员</option>-->
+                </select>
+            </td>
+        </tr>
+        <tfoot>
+            <tr>
+                <td colspan="4">
+                    <input type="button" value="确定" />&nbsp;&nbsp;
+                    <input type="button" value="关闭"  />
+                </td>
+            </tr>
+        </tfoot>
+    </table>
+</body>
+</html>

@@ -1,0 +1,125 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" >
+<head>
+    <title></title>
+    <link href="../CSS/Style1.css" rel="stylesheet" type="text/css" />
+    <link href="../Scripts/jquery.showModalDialog.css" rel="stylesheet" type="text/css" />
+    <script src="../Scripts/jquery-1.10.2.js" type="text/javascript"></script>
+    <script src="../Scripts/jquery.showModalDialog.js" type="text/javascript"></script>
+    <script src="../js/biao.js"></script>
+    <script type="text/javascript">
+
+        var thead = {
+            "CusName": "客户名称",
+            "CSTitle": "概要",
+            "STName": "服务类型",
+            "CSCreateDate": "创建时间",
+            "name": "分配人",
+            "CSDueDate": "分配时间",
+            "caozuo": "处理"
+        };
+
+        // <tr>
+        //    <th>客户名称</th>
+        //    <th>概要</th>
+        //    <th>服务类型</th>
+        //    <th>创建时间</th>
+        //    <th>分配人</th>
+        //    <th>分配时间</th>
+        //    <th>处理</th>
+        //</tr>
+         //<tr>
+        //    <th>客户名称</th>
+        //    <th>概要</th>
+        //    <th>服务类型</th>
+        //    <th>创建时间</th>
+        //    <th>创建人</th>
+        //    <th>分配时间</th>
+        //    <th>处理人</th>
+        //    <th>查看</th>
+        //</tr>
+        //表格页数
+        var ye = 1;
+        //表格行数
+        var hang = 3;
+
+        $(function () {
+            //当前页数
+            dd(ye, hang);
+        });
+
+        function dd(index, size) {
+
+            $.myajax("../W.asmx/seleview_CustomServices", { "index": index, "size": size }, function (d) {
+
+                //var tbs = $(".dataTable");
+                // var shanchu = { s: "<img title='删除' src='../images/del.gif' />" };
+                var ops = {
+                    0: {
+                        "toolname": "<input>",
+                        "text": "查看",
+                        "attrs": {
+                            "type": "image",
+                            "title": "查看",
+                            "src": "../images/bt_feedback.gif"
+                        },
+                        "click": function (d, row) {
+                            showDispose(d.ID)
+                        },
+                    },
+                    
+
+                };
+
+                $(".dataTable").setpage(thead, d.biao, ops, { pindex: index, pcount: d.count, psize: size, pck: dd });
+
+                 var tbs = $(".dataTable");
+                $.each($(tbs).find("tr"), function (k, v) {
+                    if (k != 0) {
+                        $(v).children().eq(3).text($.datetime($(v).children().eq(3).text()));
+                        $(v).children().eq(5).text($.datetime($(v).children().eq(5).text()));
+                        //alert($(v).children().eq(5).text());
+                    }
+                })
+            });
+
+        }
+
+        function showDispose() {
+            $.showModalDialog("ServiceResultDialog.htm?data="+Math.random(), "参数", 550, 400);
+        }
+    </script>
+</head>
+<body>
+<div id="desDiv">
+    <span>服务反馈</span><br />
+    对于客户提出的咨询、建议、投诉等服务进行处理完毕后，记录客户对服务的结果的满意度等
+</div>
+<div id="dataDiv">
+    <div id="headDiv">
+    </div>
+    <table class="dataTable">
+       
+        <!--<tr>
+            <td>睿智数码</td>
+            <td>询问收音机订单运费承担方式</td>
+            <td>咨询</td>
+            <td>2011年5月1日</td>
+            <td>张三</td>
+            <td>2011年5月2日</td>
+            <td><input type="image" src="../images/bt_feedback.gif" onclick="showDispose()" /></td>
+        </tr>-->
+    </table>
+    <div id="pageDiv">
+        <div id="leftPage">共有120条记录，当前第1/10页</div>
+        <div id="rightPage">
+            <input type="image" src="../images/first.gif" />&nbsp;&nbsp;
+            <input type="image" src="../images/back.gif" />&nbsp;&nbsp;
+            <input type="image" src="../images/next.gif" />&nbsp;&nbsp;
+            <input type="image" src="../images/last.gif" />&nbsp;&nbsp;
+            转到第<input type="text" size="1" />&nbsp;&nbsp;<input type="image" src="../images/go.gif" />
+        </div>
+    </div>
+</div>
+</body>
+</html>

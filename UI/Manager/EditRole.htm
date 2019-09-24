@@ -1,0 +1,74 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" >
+<head>
+    <title></title>
+    <link href="../CSS/style2.css" rel="stylesheet" type="text/css" />
+    <script src="../js/json.js"></script>
+    <script src="../js/jquery-1.10.2.js"></script>
+    <script src="../js/MyAjax.js"></script>
+    <script>
+        
+        
+        $(function () {
+            var use = window.dialogArguments;
+            //alert(use);
+
+            if (use != undefined) {
+                $("input:eq(0)").val(use.b);
+
+                //console.log(use);
+                $(":button:eq(0)").click(function () {
+                    //alert(use.ID)
+                    $.myajax("../W.asmx/upRole", { "id": use.ID, "name": $("input[type=text]").val() }, function (d) {
+                        if (d) {
+
+                            window.returnValue = { "id": use.ID, "name": $("input[type=text]").val() };
+                            window.close();
+                        } else {
+                            alert("NO");
+                        }
+                    });
+
+                });
+            } else {
+                
+                $(":button:eq(0)").click(function () {
+
+                    $.myajax("../W.asmx/inserRole", {  "name": $("input[type=text]").val() }, function (d) {
+                        if (d>0) {
+
+                            window.returnValue = { "id": d, "name": $("input[type=text]").val() };
+                            window.close();
+                        } else {
+                            alert("NO");
+                        }
+                    });
+
+                });
+            }
+        });
+
+/**/</script>
+</head>
+<body>
+    <table class="tableEdit">
+        <thead>
+            <tr>
+                <td colspan="4">修改角色</td>
+            </tr>
+        </thead>
+        <tr>
+            <th>角色名：</th>
+            <td colspan="3"><input type="text" style="width:300px" /></td>
+        </tr>
+        <tfoot>
+            <tr>
+                <td colspan="4">
+                    <input type="button" value="确定" />&nbsp;&nbsp;
+                    <input type="button" value="关闭" onclick="window.close()" />
+                </td>
+            </tr>
+        </tfoot>
+    </table>
+</body>
+</html>

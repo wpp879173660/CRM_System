@@ -1,0 +1,116 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" >
+<head>
+    <title></title>
+    <link href="../CSS/style2.css" rel="stylesheet" type="text/css" />
+    <script src="../js/jquery-1.10.2.js"></script>
+    <script src="../js/json.js"></script>
+    <script src="../js/MyAjax.js"></script>
+    <script>
+        $(function () {
+            var rid = window.dialogArguments;
+            //alert(rid)
+            //$.myajax("../W.asmx/selequanxian", { "id": rid }, function (d) {
+            //    var date = JSON.parse(d);
+            //    $.each(date, function (k, v) {
+            //        alert(k);
+            //    });
+            //});
+
+            $.myajax("../W.asmx/selequanxian", { "id": rid }, function (d) {
+                var tbs = $(".tableEdit");
+                var date = JSON.parse(d);
+                $.each(date.a1, function (k, v) {
+                    if (v.ParentID == 0) {
+                        var tr = $("<tr>").appendTo(tbs);
+                        $("<th key=" + v.ID + ">").text(v.MenuName).appendTo(tr);
+                        var td = $("<td colspan='3'>").appendTo(tr);
+                        $.each(date.you, function (kk, vv) {
+                            if (vv.ParentID == v.ID) {
+                                $("<label><input key="+vv.ID+" checked='checked' type='checkbox' /> "+vv.MenuName+"</label> <br />").appendTo(td);
+                            }
+                        })
+
+                        $.each(date.mei, function (kk, vv) {
+                            if (vv.ParentID == v.ID) {
+                                $("<label><input key="+vv.ID+" type='checkbox' /> "+vv.MenuName+"</label> <br />").appendTo(td);
+                            }
+                        })
+                    };
+                })
+            })
+
+
+
+            $(":button:eq(0)").click(function () {
+
+                var itemID = [];
+                $(":checkbox:checked").each(function (k, v) {
+                    itemID.push($(this).parent().parent().prev().attr("key"));
+                    itemID.push($(v).attr("key"));
+                    
+                })
+
+                $.myajax("../W.asmx/xiugaiquanxian", { "id": rid, "ids": itemID }, function (d) {
+                    if (d) {
+                        window.close();
+                    } else {
+                        alert("ss");
+                    };
+                });
+            });
+        })
+        
+    </script>
+</head>
+<body>
+    <table class="tableEdit">
+        <thead>
+            <tr>
+                <td colspan="4">设置角色【市场部经理】的权限</td>
+            </tr>
+        </thead>
+        <!--<tr>
+            <th>营销管理</th>
+            <td colspan="3">
+                <label><input type="checkbox" /> 销售机会管理</label> <br />
+                <label><input type="checkbox" /> 销售机会分配</label> <br />
+                <label><input type="checkbox" /> 客户开发计划</label> <br />
+            </td>
+        </tr>
+        <tr>
+            <th>客户管理</th>
+            <td colspan="3">
+                <label><input type="checkbox" /> 客户信息管理</label> <br />
+                <label><input type="checkbox" /> 客户流失管理</label> <br />
+            </td>
+        </tr>
+        <tr>
+            <th>服务管理</th>
+            <td colspan="3">
+                <label><input type="checkbox" /> 服务创建</label> <br />
+                <label><input type="checkbox" /> 服务分配</label> <br />
+                <label><input type="checkbox" /> 服务处理</label> <br />
+                <label><input type="checkbox" /> 服务反馈</label> <br />
+                <label><input type="checkbox" /> 服务归档</label> <br />
+            </td>
+        </tr>
+        <tr>
+            <th>系统管理</th>
+            <td colspan="3">
+                <label><input type="checkbox" /> 用户管理</label> <br />
+                <label><input type="checkbox" /> 角色管理</label> <br />
+                <label><input type="checkbox" /> 权限管理</label> <br />
+            </td>
+        </tr>-->
+        <tfoot>
+            <tr>
+                <td colspan="4">
+                    <input type="button" value="确定" />&nbsp;&nbsp;
+                    <input type="button" value="关闭" onclick="window.close()" />
+                </td>
+            </tr>
+        </tfoot>
+    </table>
+</body>
+</html>

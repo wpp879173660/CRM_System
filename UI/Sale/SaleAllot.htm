@@ -1,0 +1,246 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title></title>
+    <link href="../CSS/Style1.css" rel="stylesheet" type="text/css" />
+    <link href="../CSS/style2.css" rel="stylesheet" type="text/css" />
+    <link href="../Scripts/jquery.showModalDialog.css" rel="stylesheet" type="text/css" />
+    <script src="../Scripts/jquery-1.10.2.js" type="text/javascript"></script>
+    <script src="../Scripts/jquery.showModalDialog.js" type="text/javascript"></script>
+    <script src="../js/biao.js"></script>
+    <script type="text/javascript">
+
+        //<tr>
+        //    <th>客户名称</th>
+        //    <th>概要</th>
+        //    <th>联系人</th>
+        //    <th>联系电话</th>
+        //    <th>创建人</th>
+        //    <th>创建时间</th>
+        //    <th>分配人</th>
+        //</tr>
+        var date = "创建时间";
+
+        var thead = {
+            "ChanName": "客户名称",
+            "ChanTitle": "概要",
+            "ChanLinkMan": "联系人",
+            "ChanLinkTel": "联系电话",
+            "ChanCreateManName": "创建人",
+            "ChanCreateDate": date,
+            "caozuo": "分配人"
+        };
+
+        //表格页数
+        var ye = 1;
+        //表格行数
+        var hang = 3;
+
+        $(function () {
+            //当前页数
+            dd(ye, hang);
+
+            //$(":button:eq(0)").click(function () {
+            //    var a = $("input:eq(0)").val();
+            //    var b = $("input:eq(1)").val();
+            //    var c = $("input:eq(2)").val();
+            //    var d = $("input:eq(3)").val();
+            //    //alert(a)
+            //    //string channame,string ChanLinkMan,string ChanCreateManName,string ChanDueManName
+            //    $.myajax("../W.asmx/seleV_Chancesmohu", { "channame": a, "ChanLinkMan": b, "ChanCreateManName": c, "ChanDueManName": d }, function (dic) {
+            //        var tbs = $(".dataTable");
+            //        var tr = $("<tr>");
+            //        $.each(dic, function (k, v) {
+            //            $.each(v, function (kk, vv) {
+            //                $("<td>").text(vv).appendTo(tr);
+            //            })
+            //        })
+            //        tr.appendTo.tbs;
+            //    })
+            //})
+
+        });
+
+        function dd(index, size) {
+
+            $.myajax("../W.asmx/seleV_Chances", { "index": index, "size": size }, function (d) {
+
+                //var tbs = $(".dataTable");
+                // var shanchu = { s: "<img title='删除' src='../images/del.gif' />" };
+
+                var ops = {
+                    0: {
+                        "toolname": "<input>",
+                        "text": "修改",
+                        "attrs": {
+                            "type": "text",
+                            "title": "修改",
+                            //"value": $.each(d.biao, function (k, v) {
+
+
+                            //    return v.ChanDueManName
+                            //}),
+                            //"src": "../images/edt.gif"
+                        },
+                        "click": function (d, row) {
+                            // alert($(".dataTable input").val());
+                            showEdit(d)
+                        },
+                    },
+                    //1: {
+                    //    "toolname": "<input>",
+                    //    "text": "删除",
+                    //    "attrs": {
+                    //        "type": "image",
+                    //        "title": "删除",
+                    //        "src": "../images/del.gif"
+                    //    },
+                    //    "click": function (d, row) {
+                    //        // del(d.UserID);
+                    //        $.myajax("../W.asmx/dleUsers", { "id": d.UserID }, function (d) {
+                    //            row.remove();
+                    //        })
+                    //    },
+                    //}
+
+                };
+
+                $(".dataTable").setpage(thead, d.biao, ops, { pindex: index, pcount: d.count, psize: size, pck: dd });
+
+
+                $(document).on("click", ":button:eq(0)", function () {
+                    $(".dataTable").empty();
+                    var a = $("input:eq(0)").val();
+                    var b = $("input:eq(1)").val();
+                    var c = $("input:eq(2)").val();
+                    var d = $("input:eq(3)").val();
+
+                    //alert(a)
+                    //string channame,string ChanLinkMan,string ChanCreateManName,string ChanDueManName
+                    $.myajax("../W.asmx/seleV_Chancesmohu", { "channame": a, "ChanLinkMan": b, "ChanCreateManName": c, "ChanDueManName": d }, function (dic) {
+                        //alert(dic.ChanLinkMan)
+                        var name = [];
+                        $(".dataTable").setpage(thead, dic, ops, { pindex: index, pcount: 1, psize: size, pck: dd });
+                        var tbs = $(".dataTable");
+                        $.each($(tbs).find("tr"), function (k, v) {
+                            if (k != 0) {
+                                $(v).children().eq(5).text($.datetime($(v).children().eq(5).text()));
+                                //alert($(v).children().eq(5).text());
+                            }
+                            $.each(dic, function (kk, vv) {
+
+                                    name.push(vv.ChanDueManName);
+
+
+                                })
+                                var i = 0;
+                                $(v).children().eq(6).children().val(name[k-1]);
+                        })
+                        //$.each(dic, function (k, v) {
+                        //    alert(v.ChanLinkMan)
+                        //    //$(".dataTable").setpage(thead, v, ops, { pindex: index, pcount: d.count, psize: size, pck: dd });
+                        //    $.each(v, function (kk, vv) {
+                        //        //alert(vv)
+                        //        $(".dataTable").setpage(thead, vv, ops, { pindex: index, pcount: d.count, psize: size, pck: dd });
+                        //    })
+                        //})
+                    })
+                })
+
+                var tbs = $(".dataTable");
+                $.each($(tbs).find("tr"), function (k, v) {
+                    var name = [];
+                    if (k != 0) {
+                        $(v).children().eq(5).text($.datetime($(v).children().eq(5).text()));
+
+                        $.each(d.biao, function (kk, vv) {
+
+                            name.push(vv.ChanDueManName);
+
+
+                        })
+                        var i = 0;
+                        $(v).children().eq(6).children().val(name[k - 1]);
+                    }
+                })
+            });
+
+        }
+        function showEmp(input, chanid) {
+            $.showModalDialog("../publicPage/SelectEmp.htm?data=" + Math.random(), null, 200, 220, function (emp) {
+                //ajax处理返回的结果
+                //请使用 chanid、emp.id ....略....
+
+                //显示结果
+                input.value = emp.name;
+            });
+        }
+    </script>
+</head>
+<body>
+    <div id="desDiv">
+        <span>销售机会分配</span><br />
+        销售主管查看销售机会，并将销售机会分配给合适的销售人员
+    </div>
+    <table class="tableEdit">
+        <tr>
+            <th>客户名称：</th>
+            <td><input type="text" /></td>
+            <th>联系人：</th>
+            <td><input type="text" /></td>
+            <th>创建人：</th>
+            <td><input type="text" /></td>
+            <th>分配人：</th>
+            <td><input type="text" /></td>
+        </tr>
+        <tfoot>
+            <tr>
+                <td colspan="8"><input type="button" value="查询" /></td>
+            </tr>
+        </tfoot>
+    </table>
+    <br />
+    <div id="dataDiv">
+        <table class="dataTable">
+
+            <!--<tr>
+                <td>睿智数码</td>
+                <td>采购笔记本意向</td>
+                <td>张经理</td>
+                <td>13729239239</td>
+                <td>张三</td>
+                <td>2011年5月2日</td>
+                <td><input type="text" value="张三" readonly="readonly" ondblclick="showEmp(this, 123)" /></td>
+            </tr>
+            <tr>
+                <td>长沙华瑞</td>
+                <td>台式机电脑大批量采购意向</td>
+                <td>邹校</td>
+                <td>15876497565</td>
+                 <td>张三</td>
+                <td>2011年4月7日</td>
+                 <td><input type="text" value="李四" readonly="readonly" ondblclick="showEmp(this, 124)"/></td>
+            </tr>
+            <tr>
+                <td>长沙市政府采购处</td>
+                <td>电脑桌购买意向</td>
+                <td>王主任</td>
+                <td>18698709654</td>
+                 <td>李四</td>
+                <td>2011年3月2日</td>
+                 <td><input type="text" readonly="readonly" ondblclick="showEmp(this, 125)"/></td>
+            </tr>-->
+        </table>
+        <div id="pageDiv">
+            <div id="leftPage">共有120条记录，当前第1/10页</div>
+            <div id="rightPage">
+                <input type="image" id="a" src="../images/first.gif" />&nbsp;&nbsp;
+                <input type="image" id="b" src="../images/back.gif" />&nbsp;&nbsp;
+                <input type="image" id="c" src="../images/next.gif" />&nbsp;&nbsp;
+                <input type="image" id="d" src="../images/last.gif" />&nbsp;&nbsp;
+                转到第<input type="text" size="1" id="fxm" />&nbsp;&nbsp;<input type="image" id="e" src="../images/go.gif" />
+            </div>
+        </div>
+    </div>
+</body>
+</html>

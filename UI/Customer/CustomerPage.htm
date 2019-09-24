@@ -1,0 +1,509 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title></title>
+    <link href="../CSS/style2.css" rel="stylesheet" type="text/css" />
+    <link href="../CSS/Style4.css" rel="stylesheet" type="text/css" />
+    <link href="../Scripts/jquery.showModalDialog.css" rel="stylesheet" type="text/css" />
+    <script src="../Scripts/jquery-1.10.2.js" type="text/javascript"></script>
+    <script src="../Scripts/jquery.showModalDialog.js" type="text/javascript"></script>
+    <script src="../js/biao.js"></script>
+    <script type="text/javascript">
+
+        var thead = {
+            "CusID": "客户编号",
+            "CusName": "客户名称",
+            "CusDate": "建立时间",
+            "UserName": "客户经理",
+            "caozuo": "操作"
+        };
+
+        var lxthead = {
+            "LMName": "姓名",
+            "LMSex": "性别",
+            "LMDuty": "职位",
+            "LMMobileNo": "手机号码",
+            "LMOfficeNo": "办公室号码",
+            "caozuo": "操作",
+
+        };
+
+        var jwthead = {
+            "ActDate": "时间",
+            "ActAdd": "地点",
+            "ActTitle": "概要",
+            "ActDesc": "描述",
+            "caozuo": "操作",
+
+        };
+        var ye = 1;
+        var hang = 3;
+
+        $(function () {
+
+            dd(ye, hang);
+
+
+            //联系人和交往信息切换
+            $(".menuDiv div").click(function () {
+                if (!$("#dataLeft .selected").length) {
+                    alert("请先选择客户");
+                    return;
+                }
+                $(".menuDiv div.selected").removeClass("selected");
+                $(this).addClass("selected");
+                $(".contentDiv div").hide();
+                $(".contentDiv div:eq(" + $(this).index() + ")").show();
+            });
+
+            //客户表格行点击事件
+            $("#dataLeft .dataTable").on("click", "tr:gt(0)", function () {
+                var id = $(this).children().eq(0).text();
+                $("#dataLeft .selected").removeClass("selected");
+                $(this).addClass("selected");
+                if (!$(".menuDiv div.selected").length) {
+                    $(".menuDiv div:eq(0)").addClass("selected");
+                    $(".contentDiv div:eq(0)").show();
+                }
+
+                dds(ye, 3, id);
+
+                ddss(ye, 3, id);
+            });
+
+
+
+
+
+
+
+        });
+
+        function dd(index, size) {
+
+            $.myajax("../W.asmx/seleV_Customers", { "index": index, "size": size }, function (d) {
+
+                //var tbs = $(".dataTable");
+                // var shanchu = { s: "<img title='删除' src='../images/del.gif' />" };
+                var ops = {
+                    0: {
+                        "toolname": "<input>",
+                        "text": "修改",
+                        "attrs": {
+                            "type": "image",
+                            "title": "修改",
+                            "src": "../images/33.gif"
+                        },
+                        "click": function (d, row) {
+                            showCustomer(d);
+                            //showEdit(d, row)
+                            //row.remove();
+                        },
+                    },
+
+                };
+
+                $("#dataLeft > .dataTable").setpage(thead, d.biao, ops, { pindex: index, pcount: d.count, psize: size, pck: dd });
+
+
+
+                var tbs = $("#dataLeft > .dataTable");
+                $.each($(tbs).find("tr"), function (k, v) {
+                    if (k != 0) {
+                        $(v).children().eq(2).text($.datetime($(v).children().eq(2).text()));
+                        //alert($(v).children().eq(5).text());
+                    }
+                })
+            });
+
+        }
+
+
+        function dds(index, size, id) {
+
+            $.myajax("../W.asmx/seleLinkMans", { "index": index, "size": size, "id": id }, function (d) {
+
+
+                var ops = {
+                    0: {
+                        "toolname": "<input>",
+                        "text": "修改",
+                        "attrs": {
+                            "type": "image",
+                            "title": "修改",
+                            "src": "../images/33.gif"
+                        },
+                        "click": function (d, row) {
+                            showLinkMan(d);
+                            //showEdit(d, row)
+                            //row.remove();
+                        },
+                    },
+                    1: {
+                        "toolname": "<input>",
+                        "text": "删除",
+                        "attrs": {
+                            "type": "image",
+                            "title": "删除",
+                            "src": "../images/11.gif"
+                        },
+                        "click": function (d, row) {
+                             
+                            $.myajax("../W.asmx/delLinkMans", { "index": index, "size": size, "id": d.LMID }, function (d) {
+
+                                row.remove();
+                            })
+                            //showEdit(d, row)
+                            //
+                        },
+                    },
+
+                };
+
+                $("#lianxiren> .dataTable").setpage(lxthead, d.biao, ops, { pindex: index, pcount: d.count, psize: size, pck: dd });
+
+
+
+                //var tbs = $("#dataLeft > .dataTable");
+                //$.each($(tbs).find("tr"), function (k, v) {
+                //    if (k != 0) {
+                //        $(v).children().eq(2).text($.datetime($(v).children().eq(2).text()));
+                //        //alert($(v).children().eq(5).text());
+                //    }
+                //})
+            });
+
+        }
+
+        function ddss(index, size, id) {
+
+            $.myajax("../W.asmx/seleActivitys", { "index": index, "size": size, "id": id }, function (d) {
+
+
+                var ops = {
+                    0: {
+                        "toolname": "<input>",
+                        "text": "修改",
+                        "attrs": {
+                            "type": "image",
+                            "title": "修改",
+                            "src": "../images/33.gif"
+                        },
+                        "click": function (d, row) {
+                            showActivitys(d);
+                            //showEdit(d, row)
+                            //row.remove();
+                        },
+                    },
+                    1: {
+                        "toolname": "<input>",
+                        "text": "删除",
+                        "attrs": {
+                            "type": "image",
+                            "title": "删除",
+                            "src": "../images/11.gif"
+                        },
+                        "click": function (d, row) {
+                             
+                            $.myajax("../W.asmx/delActivitys", { "index": index, "size": size, "id": d.ActID }, function (d) {
+
+                                row.remove();
+                            })
+                            //showEdit(d, row)
+                            //
+                        },
+                    },
+
+                };
+
+                $("#jiaowang > .dataTable").setpage(jwthead, d.biao, ops, { pindex: index, pcount: d.count, psize: size, pck: dd });
+
+                var tbs = $("#jiaowang > .dataTable");
+                $.each($(tbs).find("tr"), function (k, v) {
+                    if (k != 0) {
+                        $(v).children().eq(0).text($.datetime($(v).children().eq(0).text()));
+                        //alert($(v).children().eq(5).text());
+                    }
+                })
+
+                //var tbs = $("#dataLeft > .dataTable");
+                //$.each($(tbs).find("tr"), function (k, v) {
+                //    if (k != 0) {
+                //        $(v).children().eq(2).text($.datetime($(v).children().eq(2).text()));
+                //        //alert($(v).children().eq(5).text());
+                //    }
+                //})
+            });
+
+        }
+
+        //编辑客户信息
+        function showCustomer(bh) {
+            console.log(bh); //打印编号
+            $.showModalDialog("CustomerEdit.htm?data=" + Math.random(), bh, 600, 400, function (d) {
+                var tbs = $("#dataLeft > .dataTable");
+                $.each($(tbs).find("tr"), function (k, v) {
+
+                    if ($(v).children().eq(0).text() == d.CusID) {
+
+                        $(v).children().eq(1).text(d.CusName);
+                    }
+                });
+
+
+            });
+        }
+        //修改联系人
+        function showLinkMan(id) {
+            console.log(id); //打印联系人ID
+            $.showModalDialog("LinkManEdit.htm?data=" + Math.random(), "参数", 600, 300);
+        }
+        //修改交往信息
+        function showActivitys(id) {
+            console.log(id); //打印交往记录ID
+            $.showModalDialog("ActivitysEdit.htm?data=" + Math.random(), "参数", 600, 300);
+        }
+
+/**/</script>
+    <style>
+        #dataLeft .dataTable tr.selected {
+            background-color: red;
+        }
+
+        .menuDiv div.selected {
+            background-image: url(../images/bg.gif);
+        }
+    </style>
+
+</head>
+<body>
+    <div id="desDiv">
+        <span>客户信息管理</span><br />
+        维护客户信息，记录客户联系电话和交往记录
+    </div>
+    <table class="tableEdit">
+        <tr>
+            <th>
+                客户名称：
+            </th>
+            <td>
+                <input type="text" />
+            </td>
+            <th>
+                客户编号：
+            </th>
+            <td>
+                <input type="text" />
+            </td>
+        </tr>
+        <tfoot>
+            <tr>
+                <td colspan="8">
+                    <input type="button" value="查询" />
+                </td>
+            </tr>
+        </tfoot>
+    </table>
+    <br />
+    <div style="width: 1065px">
+        <div id="dataLeft">
+            <table class="dataTable">
+                <!--<tr>
+                    <th>
+                        客户编号
+                    </th>
+                    <th>
+                        客户名称
+                    </th>
+                    <th>
+                        建立时间
+                    </th>
+                    <th>
+                        客户经理
+                    </th>
+                    <th>
+                        操作
+                    </th>
+                </tr>
+                <tr>
+                    <td>
+                        KH100101
+                    </td>
+                    <td>
+                        睿智数码
+                    </td>
+                    <td>
+                        2011年5月2日
+                    </td>
+                    <td>
+                        张三
+                    </td>
+                    <td>
+                        <img src="../images/33.gif" title="编辑" onclick="showCustomer('KH100101')" />
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        KH110511
+                    </td>
+                    <td>
+                        北京大学
+                    </td>
+                    <td>
+                        2011年5月2日
+                    </td>
+                    <td>
+                        张三
+                    </td>
+                    <td><img src="../images/33.gif" title="编辑" onclick="showCustomer('KH110511')" />
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        KH090123
+                    </td>
+                    <td>
+                        清华大学
+                    </td>
+                    <td>
+                        2011年5月2日
+                    </td>
+                    <td>
+                        张三
+                    </td>
+                    <td><img src="../images/33.gif" title="编辑" onclick="showCustomer('KH090123')" />
+                    </td>
+                </tr>-->
+            </table>
+            <div id="pageDiv">
+                <div id="leftPage">
+
+                </div>
+                <div id="rightPage">
+                    <input type="image" id="a" src="../images/first.gif" />&nbsp;&nbsp;
+                    <input type="image" id="b" src="../images/back.gif" />&nbsp;&nbsp;
+                    <input type="image" id="c" src="../images/next.gif" />&nbsp;&nbsp;
+                    <input type="image" id="d" src="../images/last.gif" />&nbsp;&nbsp; 转到第<input type="text" id="fxm"
+                                                                                                 size="1" />&nbsp;&nbsp;<input type="image" id="e" src="../images/go.gif" />
+                </div>
+            </div>
+        </div>
+        <div id="dataRight">
+            <div class="menuDiv">
+                <div>
+                    联系人
+                </div>
+                <div>
+                    交往信息
+                </div>
+            </div>
+            <div class="contentDiv">
+                <div id="lianxiren">
+                    <a href="javascript:showLinkMan()">新建联系人</a>
+                    <table class="dataTable">
+                        <!--<tr>
+                            <th>
+                                姓名
+                            </th>
+                            <th>
+                                性别
+                            </th>
+                            <th>
+                                职位
+                            </th>
+                            <th>
+                                固定电话
+                            </th>
+                            <th>
+                                手机号码
+                            </th>
+                            <th>
+                                操作
+                            </th>
+                        </tr>
+                        <tr>
+                            <td>
+                                张大山
+                            </td>
+                            <td>
+                                男
+                            </td>
+                            <td>
+                                经理
+                            </td>
+                            <td>
+                                0731-8998765
+                            </td>
+                            <td>
+                                13890987653
+                            </td>
+                            <td>
+                                <img title="编辑" src="../images/33.gif" onclick="showLinkMan(67)" />&nbsp;&nbsp;
+                                <img title="删除" src="../images/11.gif" />
+                            </td>
+                        </tr>-->
+                    </table>
+                </div>
+                <div  id="jiaowang">
+                    <a href="javascript:showActivitys()">新建交往记录</a>
+                    <table class="dataTable">
+                        <!--<tr>
+                            <th>
+                                时间
+                            </th>
+                            <th>
+                                地点
+                            </th>
+                            <th>
+                                概要
+                            </th>
+                            <th>
+                                描述
+                            </th>
+                            <th>
+                                操作
+                            </th>
+                        </tr>
+                        <tr>
+                            <td>
+                                2011-6-3
+                            </td>
+                            <td>
+                                华天大酒店
+                            </td>
+                            <td>
+                                签订合同
+                            </td>
+                            <td>
+                                ...
+                            </td>
+                            <td>
+                                <img title="编辑" src="../images/33.gif" onclick="showActivitys(319)" />&nbsp;
+                                <img title="删除" src="../images/11.gif" />
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                2011-4-3
+                            </td>
+                            <td>
+                                公司
+                            </td>
+                            <td>
+                                展览会
+                            </td>
+                            <td>
+                                邀请参与新产品发布
+                            </td>
+                            <td>
+                                <img title="编辑" src="../images/33.gif" onclick="showActivitys(320)" />&nbsp;
+                                <img title="删除" src="../images/11.gif" />
+                            </td>
+                        </tr>-->
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

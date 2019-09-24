@@ -1,0 +1,163 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title></title>
+    <link href="../CSS/style2.css" rel="stylesheet" type="text/css" />
+    <script src="../js/jquery-1.10.2.js"></script>
+    <script src="../js/biao.js"></script>
+    <script>
+        $(function () {
+            var s = window.dialogArguments;
+            if (s != null) {
+                $("select option:selected").text(s.ChanRate + "%");
+                $("input[type=text]:eq(0)").val(s.ChanName);
+                $("input[type=text]:eq(1)").val(s.ChanLinkMan);
+                $("input[type=text]:eq(2)").val(s.ChanLinkTel);
+                $("input[type=text]:eq(3)").val(s.ChanTitle);
+                $("textarea:eq(0)").val(s.ChanDesc);
+
+                $(":button:eq(0)").click(function () {
+
+                    var name = $("input[type=text]:eq(0)").val();
+                    var name1 = ($("select option:selected").val() * 10);
+                    var name2 = $("input[type=text]:eq(1)").val();
+                    var name3 = $("input[type=text]:eq(2)").val();
+                    var name4 = $("input[type=text]:eq(3)").val();
+                    var name5 = $("textarea:eq(0)").val();
+
+
+
+                    var C = {
+                        "ChanID": s.ChanID,
+                        "ChanName": name,
+                        "ChanRate": name1,
+                        "ChanLinkMan": name2,
+                        "ChanLinkTel": name3,
+                        "ChanTitle": name4,
+                        "ChanDesc": name5,
+                    }
+                    $.myajax("../W.asmx/upChances", { "c": C }, function (d) {
+                        if (d == 0) {
+                            window.returnValue = {
+                                "dd": d,
+                                "ChanName": name,
+                                "ChanRate": name1,
+                                "ChanLinkMan": name2,
+                                "ChanLinkTel": name3,
+                                "ChanTitle": name4,
+                                "ChanDesc": name5,
+                            };
+                            window.close();
+                        } else {
+                            alert("NO")
+                        }
+                    });
+                })
+
+            } else {
+                $(":button:eq(0)").click(function () {
+
+                    var name = $("input[type=text]:eq(0)").val();
+                    var name1 = ($("select option:selected").val() * 10);
+                    var name2 = $("input[type=text]:eq(1)").val();
+                    var name3 = $("input[type=text]:eq(2)").val();
+                    var name4 = $("input[type=text]:eq(3)").val();
+                    var name5 = $("textarea:eq(0)").val();
+
+
+                    var date = new Date();
+                    Y = date.getFullYear() + '-';
+                    M = (date.getMonth() + 1 < 10 ? '0' + (date.getMonth() + 1) : date.getMonth() + 1) + '-';
+                    D = date.getDate() + ' ';
+                    var time = (Y + M + D);
+                    //alert(time)
+                    
+                    var C = {
+                        "ChanCreateDate": time,
+                        "ChanName": name,
+                        "ChanRate": name1,
+                        "ChanLinkMan": name2,
+                        "ChanLinkTel": name3,
+                        "ChanTitle": name4,
+                        "ChanDesc": name5,
+                        "ChanCreateMan": 280,
+                        
+                    }
+                    $.myajax("../W.asmx/inChances", { "c": C }, function (d) {
+                        if (d > 0) {
+                            window.returnValue = {
+                                "dd": d,
+                                "ChanCreateDate": time,
+                                "ChanName": name,
+                                "ChanRate": name1,
+                                "ChanLinkMan": name2,
+                                "ChanLinkTel": name3,
+                                "ChanTitle": name4,
+                                "ChanDesc": name5,
+                            };
+                            window.close();
+                        } else {
+                            alert("NO")
+                        }
+                    });
+                })
+            }
+        })
+
+/**/</script>
+</head>
+<body>
+    <table class="tableEdit">
+        <thead>
+            <tr>
+                <td colspan="4">销售机会添加</td>
+            </tr>
+        </thead>
+        <tr>
+            <th>客户名称：</th>
+            <td>
+                <input type="text" />
+            </td>
+            <th>成功几率：</th>
+            <td>
+                <select>
+                    <option value="10"></option>
+                    <option value="10">100%</option>
+                    <option value="9">90%</option>
+                    <option value="8">80%</option>
+                    <option value="7">70%</option>
+                    <option value="6">60%</option>
+                    <option value="5">50%</option>
+                    <option value="4">40%</option>
+                    <option value="3">30%</option>
+                    <option value="2">20%</option>
+                    <option value="1">10%</option>
+                    <option value="0">0%</option>
+                </select>
+            </td>
+        </tr>
+        <tr>
+            <th>联系人：</th>
+            <td><input type="text" /></td>
+            <th>联系电话：</th>
+            <td><input type="text" /></td>
+        </tr>
+        <tr>
+            <th>概要：</th>
+            <td colspan="3"><input type="text" style="width:300px" /></td>
+        </tr>
+        <tr>
+            <th>机会描述：</th>
+            <td colspan="3"><textarea></textarea></td>
+        </tr>
+        <tfoot>
+            <tr>
+                <td colspan="4">
+                    <input type="button" value="确定" />&nbsp;&nbsp;
+                    <input type="button" value="关闭" onclick="window.close()" />
+                </td>
+            </tr>
+        </tfoot>
+    </table>
+</body>
+</html>
